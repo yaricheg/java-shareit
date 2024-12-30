@@ -6,9 +6,9 @@ import ru.practicum.shareit.item.model.ItemModel;
 
 import java.util.Collection;
 
-public  interface ItemService {
+public interface ItemService {
 
-    ItemModel createItem (ItemDto item, Integer user);
+    ItemModel createItem(ItemDto item, Integer user);
 
     ItemModel updateItem(Integer itemId, ItemDtoWithoutValid itemDto, Integer userId);
 
