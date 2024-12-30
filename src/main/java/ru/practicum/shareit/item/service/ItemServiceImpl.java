@@ -35,7 +35,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemModel updateItem(Integer itemId, ItemDtoWithoutValid itemDto, Integer userId) {
         ItemModel itemModel = getItemById(itemId);
-        if (itemModel.getOwner() != userId) {
+        if (!itemModel.getOwner().equals(userId)) {
             throw new NotFoundException("Данная вещь пользователю с  " +
                     "id " + userId + " не принадлежит");
         }
