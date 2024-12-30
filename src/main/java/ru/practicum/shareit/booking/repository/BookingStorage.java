@@ -1,4 +1,4 @@
 package ru.practicum.shareit.booking.repository;
 
-public class bookingDbStorage {
+public interface BookingStorage {
 }
