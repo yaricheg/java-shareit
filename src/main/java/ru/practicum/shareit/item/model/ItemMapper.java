@@ -1,13 +1,7 @@
 package ru.practicum.shareit.item.model;
 
-public class ItemMapper {
+public interface ItemMapper {
+    ItemDto toItemDto(Item item);
 
-    public static ItemDto toItemDto(ItemModel item) {
-        return new ItemDto(
-                item.getName(),
-                item.getDescription(),
-                item.isAvailable(),
-                item.getRequest() != null ? item.getRequest().getId() : null);
-    }
-
+    Item toItem (ItemDto itemDto, Integer user);
 }

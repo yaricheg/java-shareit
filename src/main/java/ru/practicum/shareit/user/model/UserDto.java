@@ -1,7 +1,7 @@
 package ru.practicum.shareit.user.model;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -9,10 +9,12 @@ import lombok.Data;
 @AllArgsConstructor
 public class UserDto {
 
-    @NotEmpty
+    private Integer id;
+
+    @NotBlank
     private String name;
 
     @Email
-    @NotEmpty
+    @NotBlank
     private String email;
 }

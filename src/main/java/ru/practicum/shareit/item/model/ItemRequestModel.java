@@ -1,4 +1,4 @@
-package ru.practicum.shareit.request;
+package ru.practicum.shareit.item.model;
 
 import lombok.Data;
 
@@ -14,6 +14,5 @@ public class ItemRequestModel {
     private String requestor; // пользователь создавший запрос
 
     private LocalDateTime created;
-
 
 }

@@ -5,8 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.model.UserDto;
-import ru.practicum.shareit.user.model.UserModel;
-import ru.practicum.shareit.user.service.UserRequestService;
+import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.service.UserService;
 
 import java.util.Collection;
 
@@ -17,29 +17,29 @@ import java.util.Collection;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserRequestService userService;
+    private final UserService userService;
 
     @GetMapping()
-    public Collection<UserModel> getAllUser() {
+    public Collection<UserDto> getAllUser() {
         return userService.getAllUser();
     }
 
     @GetMapping("/{userId}")
-    public UserModel getUserById(@PathVariable("userId") Integer userId) {
+    public UserDto getUserById(@PathVariable("userId") Integer userId) {
         return userService.getUserById(userId);
     }
 
     @PostMapping
-    public UserModel createUser(@Valid @RequestBody UserDto user) {
-        UserModel newUser = userService.createUser(user);
+    public UserDto createUser(@Valid @RequestBody UserDto user) {
+        UserDto newUser = userService.createUser(user);
         log.info("Пользователь добавлен {}", user);
         return newUser;
     }
 
     @PatchMapping("/{userId}")
-    public UserModel updateUser(@PathVariable("userId") Integer userId,
-                                @RequestBody UserDto user) {
-        UserModel updateUser = userService.updateUser(userId, user);
+    public UserDto updateUser(@PathVariable("userId") Integer userId,
+                           @RequestBody UserDto user) {
+        UserDto updateUser = userService.updateUser(userId, user);
         log.info("Пользователь обновлен {}", updateUser);
         return updateUser;
     }

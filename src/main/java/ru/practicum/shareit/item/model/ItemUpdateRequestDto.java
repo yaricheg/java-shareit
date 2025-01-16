@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class ItemDtoWithoutValid {
+public class ItemUpdateRequestDto {
 
     private String name;
 

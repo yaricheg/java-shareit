@@ -4,7 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.user.model.UserDto;
-import ru.practicum.shareit.user.model.UserModel;
+import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.model.UserMapper;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -15,31 +16,31 @@ import java.util.HashMap;
 @Slf4j
 public class InMemoryUserStorage implements UserStorage {
 
-    private final HashMap<Integer, UserModel> users = new HashMap();
+    private final HashMap<Integer, User> users = new HashMap();
+
+    private final UserMapper userMapper;
 
     @Override
-    public Collection<UserModel> getAllUser() {
+    public Collection<User> getAllUser() {
         return users.values();
     }
 
     @Override
-    public UserModel getUserById(Integer userId) {
+    public User getUserById(Integer userId) {
         return users.get(userId);
     }
 
     @Override
-    public UserModel createUser(UserDto userDto) {
-        UserModel userModel = new UserModel();
-        userModel.setId(getNextId());
-        userModel.setName(userDto.getName());
-        userModel.setEmail(userDto.getEmail());
-        users.put(userModel.getId(), userModel);
-        return userModel;
+    public User createUser(UserDto userDto) {
+        User user = userMapper.toUser(userDto);
+        user.setId(getNextId());
+        users.put(user.getId(), user);
+        return user;
     }
 
     @Override
-    public UserModel updateUser(Integer userId, UserDto user) {
-        UserModel userModel = users.get(userId);
+    public User updateUser(Integer userId, UserDto user) {
+        User userModel = users.get(userId);
         if (user.getName() != null) {
             userModel.setName(user.getName());
         }

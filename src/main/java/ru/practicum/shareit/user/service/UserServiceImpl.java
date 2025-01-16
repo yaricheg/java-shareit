@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.user.model.UserDto;
-import ru.practicum.shareit.user.model.UserModel;
+import ru.practicum.shareit.user.model.UserMapper;
 import ru.practicum.shareit.user.repository.UserStorage;
 import ru.practicum.shareit.exception.ConflictException;
 
@@ -15,30 +15,35 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class UserRequestServiceImpl implements UserRequestService {
+public class UserServiceImpl implements UserService {
 
     private final UserStorage userStorage;
+    private final UserMapper userMapper;
 
     @Override
-    public Collection<UserModel> getAllUser() {
-        return userStorage.getAllUser();
+    public Collection<UserDto> getAllUser() {
+        Collection<UserDto> allUsers = userStorage.getAllUser()
+                .stream()
+                .map(user -> userMapper.toUserDto(user))
+                .collect(Collectors.toList());
+        return allUsers;
     }
 
     @Override
-    public UserModel getUserById(Integer userId) {
-        return userStorage.getUserById(userId);
+    public UserDto getUserById(Integer userId) {
+        return userMapper.toUserDto(userStorage.getUserById(userId));
     }
 
     @Override
-    public UserModel createUser(UserDto user) {
+    public UserDto createUser(UserDto user) {
         usersEmailCheck(user);
-        return userStorage.createUser(user);
+        return userMapper.toUserDto(userStorage.createUser(user));
     }
 
     @Override
-    public UserModel updateUser(Integer userId, UserDto user) {
+    public UserDto updateUser(Integer userId, UserDto user) {
         usersEmailCheck(user);
-        return userStorage.updateUser(userId, user);
+        return userMapper.toUserDto(userStorage.updateUser(userId, user));
     }
 
     @Override
@@ -53,7 +58,5 @@ public class UserRequestServiceImpl implements UserRequestService {
         if (emailUsers.contains(user.getEmail())) {
             throw new ConflictException("Пользователь с данным email уже существует");
         }
-
     }
-
 }
