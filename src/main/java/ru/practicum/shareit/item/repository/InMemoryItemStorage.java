@@ -60,18 +60,18 @@ public class InMemoryItemStorage implements ItemStorage {
 
     @Override
     public Collection<Item> getItemsSearch(String text) {
-       Collection<Item> itemSearchName =  items.values()
+        Collection<Item> itemSearchName = items.values()
                 .stream()
                 .filter(item -> StringUtils.containsIgnoreCase(item.getName(), text)
                         && item.isAvailable())
                 .toList();
-       if(itemSearchName.isEmpty()){
-           return items.values()
-                   .stream()
-                   .filter(item -> StringUtils.containsIgnoreCase(item.getDescription(), text)
-                           && item.isAvailable())
-                   .toList();
-       }
+        if (itemSearchName.isEmpty()) {
+            return items.values()
+                    .stream()
+                    .filter(item -> StringUtils.containsIgnoreCase(item.getDescription(), text)
+                            && item.isAvailable())
+                    .toList();
+        }
         return itemSearchName;
     }
 

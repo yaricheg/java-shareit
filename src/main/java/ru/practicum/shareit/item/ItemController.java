@@ -28,8 +28,8 @@ public class ItemController {
 
     @PatchMapping("/{itemId}") // изменить можно название, описание, статус
     public ItemDto updateItem(@PathVariable("itemId") Integer itemId,
-                           @RequestBody ItemUpdateRequestDto item,
-                           @RequestHeader("X-Sharer-User-Id") Integer userId) {
+                              @RequestBody ItemUpdateRequestDto item,
+                              @RequestHeader("X-Sharer-User-Id") Integer userId) {
         return itemService.updateItem(itemId, item, userId);
     }
 

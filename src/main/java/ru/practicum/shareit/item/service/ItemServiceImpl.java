@@ -24,7 +24,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto createItem(ItemDto item, Integer userId) {
-        User user =  userStorage.getUserById(userId);
+        User user = userStorage.getUserById(userId);
         if (user == null) {
             throw new NotFoundException("Пользователь не найден");
         }
