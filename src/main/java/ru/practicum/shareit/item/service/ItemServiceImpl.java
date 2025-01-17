@@ -20,7 +20,6 @@ public class ItemServiceImpl implements ItemService {
 
     private final ItemStorage itemStorage;
     private final UserStorage userStorage;
-    private final ItemMapper itemMapper;
 
     @Override
     public ItemDto createItem(ItemDto item, Integer userId) {
@@ -28,7 +27,7 @@ public class ItemServiceImpl implements ItemService {
         if (user == null) {
             throw new NotFoundException("Пользователь не найден");
         }
-        return itemMapper.toItemDto(itemStorage.createItem(item, userId));
+        return ItemMapper.toItemDto(itemStorage.createItem(item, userId));
     }
 
     @Override
@@ -38,18 +37,18 @@ public class ItemServiceImpl implements ItemService {
             throw new NotFoundException("Данная вещь пользователю с  " +
                     "id " + userId + " не принадлежит");
         }
-        return itemMapper.toItemDto(itemStorage.updateItem(itemId, itemDto, userId));
+        return ItemMapper.toItemDto(itemStorage.updateItem(itemId, itemDto, userId));
     }
 
     @Override
     public ItemDto getItemById(Integer itemId) {
-        return itemMapper.toItemDto(itemStorage.getItemById(itemId));
+        return ItemMapper.toItemDto(itemStorage.getItemById(itemId));
     }
 
     @Override
     public Collection<ItemDto> getItemsOfUser(Integer userId) {
         Collection<ItemDto> itemsDto = itemStorage.getItemsOfUser(userId).stream()
-                .map(item -> itemMapper.toItemDto(item))
+                .map(item -> ItemMapper.toItemDto(item))
                 .collect(Collectors.toList());
         return itemsDto;
     }
@@ -60,7 +59,7 @@ public class ItemServiceImpl implements ItemService {
             return new ArrayList<>();
         }
         Collection<ItemDto> itemsDto = itemStorage.getItemsSearch(text).stream()
-                .map(item -> itemMapper.toItemDto(item))
+                .map(item -> ItemMapper.toItemDto(item))
                 .collect(Collectors.toList());
         return itemsDto;
     }

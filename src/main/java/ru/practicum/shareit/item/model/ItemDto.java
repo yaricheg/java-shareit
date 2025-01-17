@@ -15,8 +15,7 @@ public class ItemDto {
     @NotBlank
     private String name;
 
-    @NotEmpty
-    @NotNull
+    @NotBlank
     private String description;
 
     @NotNull

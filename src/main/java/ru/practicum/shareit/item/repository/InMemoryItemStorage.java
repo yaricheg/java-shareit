@@ -19,11 +19,10 @@ public class InMemoryItemStorage implements ItemStorage {
 
     private final HashMap<Integer, Item> items = new HashMap();
 
-    private final ItemMapper itemMapper;
 
     @Override
     public Item createItem(ItemDto itemDto, Integer user) {
-        Item item = itemMapper.toItem(itemDto, user);
+        Item item = ItemMapper.toItem(itemDto, user);
         item.setId(getNextId());
         items.put(item.getId(), item);
         return item;
@@ -60,19 +59,11 @@ public class InMemoryItemStorage implements ItemStorage {
 
     @Override
     public Collection<Item> getItemsSearch(String text) {
-        Collection<Item> itemSearchName = items.values()
+        return items.values()
                 .stream()
-                .filter(item -> StringUtils.containsIgnoreCase(item.getName(), text)
-                        && item.isAvailable())
+                .filter(item -> StringUtils.containsIgnoreCase(item.getName(), text) && item.isAvailable()
+                        || (StringUtils.containsIgnoreCase(item.getDescription(), text) && item.isAvailable()))
                 .toList();
-        if (itemSearchName.isEmpty()) {
-            return items.values()
-                    .stream()
-                    .filter(item -> StringUtils.containsIgnoreCase(item.getDescription(), text)
-                            && item.isAvailable())
-                    .toList();
-        }
-        return itemSearchName;
     }
 
     private Integer getNextId() {
