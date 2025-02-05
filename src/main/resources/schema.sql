@@ -1,8 +1,8 @@
-TRUNCATE table users CASCADE;
-TRUNCATE table items CASCADE;
-TRUNCATE table bookings CASCADE;
-TRUNCATE table requests CASCADE;
-TRUNCATE table comments CASCADE;
+--TRUNCATE table users CASCADE;
+--TRUNCATE table items CASCADE;
+--TRUNCATE table bookings CASCADE;
+--TRUNCATE table requests CASCADE;
+--TRUNCATE table comments CASCADE;
 
 
 create table if not exists users (
@@ -22,7 +22,7 @@ create table if not exists items (
   last_booking TIMESTAMP WITHOUT TIME ZONE,
   next_booking TIMESTAMP WITHOUT TIME ZONE,
   FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE,
-  FOREIGN KEY (comment_id) REFERENCES comments(id) ON DELETE CASCADE
+  FOREIGN KEY (comment_id) REFERENCES commentss(id) ON DELETE CASCADE
 );
 
 create table if not exists bookings (
