@@ -1,11 +1,11 @@
 package ru.practicum.shareit.item.model;
+
 import ru.practicum.shareit.user.model.User;
 
 
 public class ItemMapper {
 
-
-    public static ItemDto toItemDto(Item item ) {
+    public static ItemDto toItemDto(Item item) {
         ItemDto itemDto = new ItemDto(
                 item.getId(),
                 item.getName(),
