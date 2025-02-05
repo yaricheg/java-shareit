@@ -13,7 +13,7 @@ import java.util.List;
 @Data
 @Validated
 @Entity
-@Table(name = "items")
+@Table(name = "ITEMS")
 public class Item {
 
     @Id

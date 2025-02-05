@@ -9,7 +9,7 @@ import ru.practicum.shareit.user.model.User;
 
 @Data
 @Validated
-@Table(name = "requests")
+@Table(name = "REQUESTS")
 @Entity
 public class ItemRequest {
 

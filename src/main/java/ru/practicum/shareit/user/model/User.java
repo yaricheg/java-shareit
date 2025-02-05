@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(of = "email")
 @Entity
-@Table(name = "users")
+@Table(name = "USERS")
 public class User {
 
     @Id

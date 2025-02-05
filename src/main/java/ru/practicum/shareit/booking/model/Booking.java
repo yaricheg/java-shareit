@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Data
 @Validated
 @Entity
-@Table(name = "bookings")
+@Table(name = "BOOKINGS")
 public class Booking {
 
     @Id

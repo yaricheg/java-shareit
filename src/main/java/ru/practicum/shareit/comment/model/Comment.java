@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Data
 @Validated
 @Entity
-@Table(name = "comments")
+@Table(name = "COMMENTS")
 public class Comment {
 
     @Id
