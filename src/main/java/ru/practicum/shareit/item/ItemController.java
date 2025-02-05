@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.comment.model.CommentDto;
 import ru.practicum.shareit.item.model.ItemDto;
 import ru.practicum.shareit.item.model.ItemUpdateRequestDto;
 import ru.practicum.shareit.item.service.ItemService;
@@ -20,27 +21,27 @@ public class ItemController {
     private final ItemService itemService;
 
     @PostMapping
-    public ItemDto createItem(@Valid @RequestBody ItemDto item, @RequestHeader("X-Sharer-User-Id") Integer user) {
+    public ItemDto createItem(@Valid @RequestBody ItemDto item, @RequestHeader("X-Sharer-User-Id") Long user) {
         ItemDto newItem = itemService.createItem(item, user);
         log.info("Вещь добавлена {}", newItem);
         return newItem;
     }
 
     @PatchMapping("/{itemId}") // изменить можно название, описание, статус
-    public ItemDto updateItem(@PathVariable("itemId") Integer itemId,
+    public ItemDto updateItem(@PathVariable("itemId") Long itemId,
                               @RequestBody ItemUpdateRequestDto item,
-                              @RequestHeader("X-Sharer-User-Id") Integer userId) {
+                              @RequestHeader("X-Sharer-User-Id") Long userId) {
         return itemService.updateItem(itemId, item, userId);
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto getItemById(@PathVariable("itemId") Integer itemId) {
+    public ItemDto getItemById(@PathVariable("itemId") Long itemId) {
         log.info("Просмотр информации по конкретной вещи");
         return itemService.getItemById(itemId);
     }
 
     @GetMapping
-    public Collection<ItemDto> getItemsOfUser(@RequestHeader("X-Sharer-User-Id") Integer userId) {
+    public Collection<ItemDto> getItemsOfUser(@RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("Просмотр вещей пользователя ");
         return itemService.getItemsOfUser(userId);
     }
@@ -51,4 +52,11 @@ public class ItemController {
         return itemService.getItemsSearch(text);
     }
 
+    @PostMapping("/{itemId}/comment")
+    public CommentDto createItemComment(@PathVariable("itemId") Long itemId,
+                                     @RequestBody CommentDto commentDto,
+                                     @RequestHeader("X-Sharer-User-Id") Long authorId) {
+        log.info("Создание комментария к вещи");
+        return itemService.createItemComment(itemId, commentDto, authorId);
+    }
 }

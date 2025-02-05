@@ -3,9 +3,10 @@ package ru.practicum.shareit.user.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.model.UserDto;
 import ru.practicum.shareit.user.model.UserMapper;
-import ru.practicum.shareit.user.repository.UserStorage;
+import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.exception.ConflictException;
 
 import java.util.Collection;
@@ -17,39 +18,49 @@ import java.util.stream.Collectors;
 @Slf4j
 public class UserServiceImpl implements UserService {
 
-    private final UserStorage userStorage;
-    private final UserMapper userMapper;
+    private final UserRepository userRepository;
 
     @Override
     public Collection<UserDto> getAllUser() {
-        Collection<UserDto> allUsers = userStorage.getAllUser()
+        Collection<UserDto> allUsers = userRepository.findAll()
                 .stream()
-                .map(user -> userMapper.toUserDto(user))
+                .map(user -> UserMapper.toUserDto(user))
                 .collect(Collectors.toList());
         return allUsers;
     }
 
     @Override
-    public UserDto getUserById(Integer userId) {
-        return userMapper.toUserDto(userStorage.getUserById(userId));
+    public UserDto getUserById(Long userId) {
+        return UserMapper.toUserDto(userRepository.getById(userId));
     }
 
     @Override
     public UserDto createUser(UserDto user) {
         usersEmailCheck(user);
-        return userMapper.toUserDto(userStorage.createUser(user));
+        User userModel = UserMapper.toUser(user);
+        userRepository.save(userModel);
+        return UserMapper.toUserDto(userRepository.getById(userModel.getId()));
     }
 
     @Override
-    public UserDto updateUser(Integer userId, UserDto user) {
+    public UserDto updateUser(Long userId, UserDto user) {
         usersEmailCheck(user);
-        return userMapper.toUserDto(userStorage.updateUser(userId, user));
+        User userModel = userRepository.getById(userId);
+        if (user.getName() != null) {
+            userModel.setName(user.getName());
+        }
+        if (user.getEmail() != null) {
+            userModel.setEmail(user.getEmail());
+        }
+        userRepository.save(userModel);
+        return UserMapper.toUserDto(userRepository.getById(userId));
     }
 
     @Override
-    public void deleteUserById(Integer userId) {
-        userStorage.deleteUserById(userId);
+    public void deleteUserById(Long userId) {
+        userRepository.deleteById(userId);
     }
+
 
     private void usersEmailCheck(UserDto user) {
         Set<String> emailUsers = getAllUser()
