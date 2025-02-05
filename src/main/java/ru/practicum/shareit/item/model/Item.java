@@ -37,12 +37,11 @@ public class Item {
     @Column(name = "last_booking")
     private LocalDateTime lastBooking;
 
-
     @Column(name = "next_booking")
     private LocalDateTime nextBooking;
 
     @ElementCollection
-    @CollectionTable(name="comments", joinColumns=@JoinColumn(name="item_id"))
-    @Column(name="text_comment")
+    @CollectionTable(name = "comments", joinColumns = @JoinColumn(name = "item_id"))
+    @Column(name = "text_comment")
     private List<String> comments = new ArrayList<>();
 }
