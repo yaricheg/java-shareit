@@ -107,7 +107,8 @@ public class BookingServiceImpl implements BookingService {
         if (state.equals("ALL")) {
             bookings = bookingRepository.getBookingsByUserWithoutStatus(userId);
         }
-        if (BookingStatus.values().equals(state)) {
+        if (state.equals(APPROVED) || state.equals(WAITING)
+                || state.equals(CANCELED) || state.equals(REJECTED)) {
             bookings = bookingRepository.getBookingsByUserWithStatus(userId, state);
         }
         if (state.equals("CURRENT")) {
@@ -132,7 +133,8 @@ public class BookingServiceImpl implements BookingService {
         if (state.equals("ALL")) {
             bookings = bookingRepository.getBookingsByOwnerWithoutStatus(ownerId);
         }
-        if (BookingStatus.values().equals(state)) {
+        if (state.equals(APPROVED) || state.equals(WAITING)
+                || state.equals(CANCELED) || state.equals(REJECTED)) {
             bookings = bookingRepository.getBookingsByOwnerWithStatus(ownerId, state);
         }
         if (state.equals("CURRENT")) {
