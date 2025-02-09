@@ -1,8 +1,8 @@
---TRUNCATE table users CASCADE;
---TRUNCATE table items CASCADE;
---TRUNCATE table bookings CASCADE;
---TRUNCATE table requests CASCADE;
---TRUNCATE table comments CASCADE;
+TRUNCATE table users CASCADE;
+TRUNCATE table items CASCADE;
+TRUNCATE table bookings CASCADE;
+TRUNCATE table requests CASCADE;
+TRUNCATE table comments CASCADE;
 
 
 create table if not exists USERS (
