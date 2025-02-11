@@ -13,7 +13,7 @@ import java.util.Collection;
 
 
 @RestController
-@RequestMapping("/items")
+@RequestMapping(path = "/items")
 @Slf4j
 @RequiredArgsConstructor
 public class ItemController {

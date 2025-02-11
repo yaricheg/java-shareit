@@ -11,7 +11,7 @@ import java.util.Collection;
 
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping(path = "/users")
 @Slf4j
 @RequiredArgsConstructor
 public class UserController {
