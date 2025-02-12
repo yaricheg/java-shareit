@@ -6,9 +6,12 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - server
+      - db
     environment:
-      - SHAREIT_SERVER_URL=http://server:9090
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/shareit
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=12345
+
 
 db:
   image: postgres:16.1
@@ -26,17 +29,3 @@ db:
     timeout: 5s
     interval: 5s
     retries: 10
-
-
-  server:
-    build: server
-    image: shareit-server
-    container_name: shareit-server
-    ports:
-      - "9090:9090"
-    depends_on:
-      - db
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/shareit
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=12345
