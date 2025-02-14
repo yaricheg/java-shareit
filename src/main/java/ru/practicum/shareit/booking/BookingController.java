@@ -1,60 +1,53 @@
 package ru.practicum.shareit.booking;
 
 import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.model.BookingDto;
 import ru.practicum.shareit.booking.service.BookingService;
 
-import java.util.Collection;
+import java.util.List;
 
 @RestController
-@RequestMapping("/bookings")
-@Slf4j
+@RequestMapping(path = "/bookings")
 @RequiredArgsConstructor
 public class BookingController {
-
     private final BookingService bookingService;
 
     @PostMapping
-    public BookingDto createBooking(@Valid @RequestBody BookingDto bookingDto,
-                                    @RequestHeader("X-Sharer-User-Id") Long userId) {
-        log.info("Создано бронирование вещи {}");
+    public BookingDto createBooking(@NotNull @RequestHeader("X-Sharer-User-Id") Long userId,
+                                    @Valid @RequestBody BookingDto bookingDto) {
+        if (bookingDto.getEnd().isBefore(bookingDto.getStart())) {
+            throw new ValidationException("Дата окончания бронирования не может быть раньше даты начала");
+        }
+
         return bookingService.createBooking(bookingDto, userId);
     }
 
     @PatchMapping("/{bookingId}")
-    public BookingDto confirmationBooking(@PathVariable("bookingId") Long bookingId,
-                                          @RequestParam("approved") Boolean approved,
-                                          @RequestHeader("X-Sharer-User-Id") Long userId
-    ) {
-        //@RequestBody BookingUpdateRequestDto booking
-        log.info("Подтверждение или отклонение запроса на бронирование {}");
-        return bookingService.confirmationBooking(bookingId, approved, userId);
+    public BookingDto updateBookingStatus(@NotNull @RequestHeader("X-Sharer-User-Id") Long userId,
+                                          @PathVariable Long bookingId,
+                                          @RequestParam Boolean approved) {
+        return bookingService.updateBookingStatus(userId, bookingId, approved);
     }
 
     @GetMapping("/{bookingId}")
-    public BookingDto getBookingById(@RequestHeader("X-Sharer-User-Id") Integer user,
-                                     @PathVariable("bookingId") Long bookingId) {
-        log.info("Получение бронирование по id {}");
-        return bookingService.getBookingById(bookingId);
+    public BookingDto getBooking(@NotNull @RequestHeader("X-Sharer-User-Id") Long userId,
+                                 @PathVariable Long bookingId) {
+        return bookingService.getBookingById(userId, bookingId);
     }
 
-    @GetMapping()
-    public Collection<BookingDto> getAllBookings(@RequestParam(required = false) String owner,
-                                                 @RequestParam(defaultValue = "ALL") String state,
-                                                 @RequestHeader("X-Sharer-User-Id") Long userId) {
-        log.info("Получение всех бронирований {}");
-
-        return bookingService.getAllBookings(state, userId);
+    @GetMapping
+    public List<BookingDto> getUserBookings(@NotNull @RequestHeader("X-Sharer-User-Id") Long userId,
+                                            @RequestParam(defaultValue = "ALL") String state) {
+        return bookingService.getUserBookings(userId, state);
     }
 
     @GetMapping("/owner")
-    public Collection<BookingDto> getAllBookingsByOwner(@RequestParam(defaultValue = "ALL") String state,
-                                                        @RequestHeader("X-Sharer-User-Id") Long userId) {
-        log.info("Получение всех запросов к вещам пользовтателей{}");
-        return bookingService.getBookingsByOwner(userId, state);
+    public List<BookingDto> getOwnerBookings(@NotNull @RequestHeader("X-Sharer-User-Id") Long userId,
+                                             @RequestParam(defaultValue = "ALL") String state) {
+        return bookingService.getOwnerBookings(userId, state);
     }
-
 }

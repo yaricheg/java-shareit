@@ -1,41 +1,38 @@
 package ru.practicum.shareit.item.model;
 
-import ru.practicum.shareit.user.model.User;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
-
-public class ItemMapper {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class ItemMapper {
+    public static Item toItem(ItemDto itemDto, long id, long userId) {
+        return new Item(
+                id,
+                itemDto.getName(),
+                itemDto.getDescription(),
+                itemDto.getAvailable(),
+                userId
+        );
+    }
 
     public static ItemDto toItemDto(Item item) {
-        ItemDto itemDto = new ItemDto(
+        return new ItemDto(
                 item.getId(),
                 item.getName(),
                 item.getDescription(),
-                item.isAvailable(),
-                item.getRequest() != null ? item.getRequest() : null,
-                item.getLastBooking() != null ? null : null,
-                item.getNextBooking() != null ? null : null,
-                item.getComments() != null ? item.getComments() : null);
-        return itemDto;
+                item.isAvailable()
+        );
     }
 
-    public static Item toItem(ItemDto itemDto, User user) {
-        Item item = new Item();
-        item.setName(itemDto.getName());
-        item.setDescription(itemDto.getDescription());
-        item.setOwner(user);
-        item.setAvailable(itemDto.getAvailable());
-        item.setRequest(itemDto.getRequest());
-        return item;
+    public static void updateItemFields(Item item, ItemDto request) {
+        if (request.getName() != null && !request.getName().isBlank()) {
+            item.setName(request.getName());
+        }
+        if (request.getDescription() != null && !request.getDescription().isBlank()) {
+            item.setDescription(request.getDescription());
+        }
+        if (request.getAvailable() != null) {
+            item.setAvailable(request.getAvailable());
+        }
     }
-
-    public static Item toItemWithoutRequest(ItemDto itemDto, User user) {
-        Item item = new Item();
-        item.setName(itemDto.getName());
-        item.setDescription(itemDto.getDescription());
-        item.setOwner(user);
-        item.setAvailable(itemDto.getAvailable());
-        item.setRequest(Long.valueOf(0));
-        return item;
-    }
-
 }

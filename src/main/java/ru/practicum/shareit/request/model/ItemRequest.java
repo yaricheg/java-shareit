@@ -1,30 +1,29 @@
 package ru.practicum.shareit.request.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import org.springframework.validation.annotation.Validated;
-import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.model.User;
+import lombok.*;
 
+import java.time.LocalDateTime;
 
-@Data
-@Validated
-@Table(name = "REQUESTS")
 @Entity
+@Table(name = "item_requests")
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class ItemRequest {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; //— уникальный идентификатор запроса;
+    @Column(name = "id")
+    private Long id;
 
-    private String description; // — текст запроса, содержащий описание требуемой вещи;
+    @Column(name = "description")
+    private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "requestor_id")
-    private User requestor; //— пользователь, создавший запрос;
+    @Column(name = "requestor")
+    private Long requestor;
 
-    @ManyToOne
-    @JoinColumn(name = "requested_item_id")
-    private Item requestedItem;
-   // private LocalDateTime created; //— дата и время создания запроса.
+    @Column(name = "created")
+    private LocalDateTime created;
 }

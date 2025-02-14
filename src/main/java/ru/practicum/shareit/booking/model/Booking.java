@@ -1,39 +1,40 @@
 package ru.practicum.shareit.booking.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import org.springframework.validation.annotation.Validated;
+import lombok.*;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 
-@Data
-@Validated
 @Entity
-@Table(name = "BOOKINGS")
+@Table(name = "bookings")
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class Booking {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;//— уникальный идентификатор бронирования;
+    @Column(name = "id")
+    private Long id;
 
     @Column(name = "start_date")
-    private LocalDateTime start; // — дата и время начала бронирования;
+    private LocalDateTime start;
 
     @Column(name = "end_date")
-    private LocalDateTime end;  //— дата и время конца бронирования;
+    private LocalDateTime end;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
-    private Item item; //— вещь, которую пользователь бронирует;
+    private Item item;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "booker_id")
-    private User booker; //— пользователь, который осуществляет бронирование
+    private User booker;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
     private BookingStatus status;
-
-
 }

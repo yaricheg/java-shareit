@@ -1,47 +1,43 @@
 package ru.practicum.shareit.item.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import org.springframework.validation.annotation.Validated;
-import ru.practicum.shareit.user.model.User;
+import lombok.*;
+import ru.practicum.shareit.request.model.ItemRequest;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
-
-@Data
-@Validated
 @Entity
-@Table(name = "ITEMS")
+@Table(name = "items")
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class Item {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
+    @Column(name = "name")
     private String name;
 
+    @Column(name = "description")
     private String description;
 
-    @Column(name = "is_available")
+    @Column(name = "available")
     private boolean available;
 
-    @ManyToOne
-    @JoinColumn(name = "owner_id")
-    private User owner;
+    @Column(name = "owner")
+    private long owner;
 
-    @Column(name = "request_id")
-    private Long request;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "request")
+    private ItemRequest request;
 
-    @Column(name = "last_booking")
-    private LocalDateTime lastBooking;
-
-    @Column(name = "next_booking")
-    private LocalDateTime nextBooking;
-
-    @ElementCollection
-    @CollectionTable(name = "comments", joinColumns = @JoinColumn(name = "item_id"))
-    @Column(name = "text_comment")
-    private List<String> comments = new ArrayList<>();
+    public Item(long id, String name, String description, boolean available, long owner) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.available = available;
+        this.owner = owner;
+    }
 }
