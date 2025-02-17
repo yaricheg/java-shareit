@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.model.BookingDto;
 import ru.practicum.shareit.booking.service.BookingService;
@@ -14,6 +15,8 @@ import java.util.List;
 @RequestMapping(path = "/bookings")
 @RequiredArgsConstructor
 public class BookingController {
+
+    @Autowired
     private final BookingService bookingService;
 
     @PostMapping

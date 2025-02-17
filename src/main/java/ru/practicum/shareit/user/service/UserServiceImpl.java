@@ -1,6 +1,8 @@
 package ru.practicum.shareit.user.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.NotFoundException;
@@ -16,8 +18,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
+    @Autowired
     private final UserRepository userRepository;
 
+
+    @Override
+    @Transactional
     public UserDto createUser(UserDto userDto) {
         boolean emailExists = userRepository.existsByEmail(userDto.getEmail());
         if (emailExists) {
@@ -28,6 +34,8 @@ public class UserServiceImpl implements UserService {
         return UserMapper.toUserDto(userRepository.save(user));
     }
 
+    @Override
+    @Transactional
     public UserDto updateUser(long userId, UserDto userDto) {
         User existingUser = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
@@ -42,12 +50,16 @@ public class UserServiceImpl implements UserService {
         return UserMapper.toUserDto(userRepository.save(existingUser));
     }
 
+    @Override
+    @Transactional
     public UserDto getUserById(long userId) {
         return userRepository.findById(userId)
                 .map(UserMapper::toUserDto)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден с ID: " + userId));
     }
 
+    @Override
+    @Transactional
     public List<UserDto> getUsers() {
         return userRepository.findAll()
                 .stream()
@@ -55,6 +67,8 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    @Transactional
     public void deleteUser(long userId) {
         if (!userRepository.existsById(userId)) {
             throw new NotFoundException("Пользователь не найден с ID: " + userId);

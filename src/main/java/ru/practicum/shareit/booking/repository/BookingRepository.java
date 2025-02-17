@@ -39,11 +39,24 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                                                            BookingStatus status, LocalDateTime end);
 
 
-    @Query("SELECT b FROM Booking b WHERE b.item IN :items AND b.end < CURRENT_TIMESTAMP " +
+    @Query("SELECT b FROM Booking b " +
+            "WHERE b.item IN :items " +
+            "AND b.end < CURRENT_TIMESTAMP " +
+            "AND b.status = APPROVED " +
             "ORDER BY b.end DESC")
     List<Booking> findLastBookings(@Param("items") List<Item> items);
 
-    @Query("SELECT b FROM Booking b WHERE b.item IN :items AND b.start > CURRENT_TIMESTAMP " +
+    @Query("SELECT b FROM Booking b " +
+            "WHERE b.item IN :items " +
+            "AND b.start > CURRENT_TIMESTAMP " +
+            "AND b.status = APPROVED " +
             "ORDER BY b.start ASC")
     List<Booking> findNextBookings(@Param("items") List<Item> items);
+
+    @Query("SELECT b FROM Booking b " +
+            "WHERE b.item IN :item " +
+            "AND b.start > CURRENT_TIMESTAMP " +
+            "AND b.status = APPROVED " +
+            "ORDER BY b.start ASC")
+    List<Booking> findNextBookingsForItem(@Param("item") Item item);
 }

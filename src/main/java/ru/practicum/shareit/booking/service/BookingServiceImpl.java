@@ -1,9 +1,12 @@
 package ru.practicum.shareit.booking.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.model.*;
 import ru.practicum.shareit.booking.repository.BookingRepository;
+import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.model.Item;
@@ -20,12 +23,19 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
 
+    @Autowired
     private final BookingRepository bookingRepository;
+
+    @Autowired
     private final UserRepository userRepository;
+
+    @Autowired
     private final ItemRepository itemRepository;
 
 
+
     @Override
+    @Transactional
     public BookingDto createBooking(BookingDto bookingDto, Long userId) {
         User booker = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
@@ -36,13 +46,26 @@ public class BookingServiceImpl implements BookingService {
         if (!item.isAvailable()) {
             throw new ValidationException("Предмет недоступен для бронирования");
         }
-
+        List<Booking> bookings = bookingRepository.findNextBookingsForItem(item);
+        bookings.stream()
+                .forEach(b -> {
+                    if (bookingDto.getStart().isAfter(b.getStart()) &
+                            bookingDto.getStart().isBefore(b.getEnd())) {
+                        throw new BadRequestException("Введите другое время бронирования");
+                    }
+                    if (bookingDto.getEnd().isAfter(b.getStart()) &
+                            bookingDto.getEnd().isBefore(b.getEnd())) {
+                        throw new BadRequestException("Введите другое время бронирования");
+                    }
+                });
         Booking booking = BookingMapper.toBooking(bookingDto, booker, item, BookingStatus.WAITING);
         Booking savedBooking = bookingRepository.save(booking);
         return BookingMapper.toBookingDto(savedBooking);
     }
 
+
     @Override
+    @Transactional
     public BookingDto updateBookingStatus(Long userId, Long bookingId, Boolean approved) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new NotFoundException("Бронирование не найдено"));
@@ -62,19 +85,24 @@ public class BookingServiceImpl implements BookingService {
         return BookingMapper.toBookingDto(booking);
     }
 
+
     @Override
+    @Transactional
     public BookingDto getBookingById(Long userId, Long bookingId) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new NotFoundException("Бронирование не найдено"));
 
         if (booking.getBooker().getId() != userId && booking.getItem().getOwner() != userId) {
-            throw new NotFoundException("Доступ запрещен: Только автор бронирования или владелец вещи могут просматривать бронирование");
+            throw new NotFoundException("Доступ запрещен: " +
+                    "Только автор бронирования или владелец вещи могут просматривать бронирование");
         }
 
         return BookingMapper.toBookingDto(booking);
     }
 
+
     @Override
+    @Transactional
     public List<BookingDto> getUserBookings(Long userId, String state) {
         if (!userRepository.existsById(userId)) {
             throw new NotFoundException("Пользователь с ID " + userId + " не найден");
@@ -113,7 +141,9 @@ public class BookingServiceImpl implements BookingService {
                 .collect(Collectors.toList());
     }
 
+
     @Override
+    @Transactional
     public List<BookingDto> getOwnerBookings(Long ownerId, String state) {
         if (!userRepository.existsById(ownerId)) {
             throw new NotFoundException("Пользователь с ID " + ownerId + " не найден");
@@ -146,7 +176,6 @@ public class BookingServiceImpl implements BookingService {
                 bookings = bookingRepository.findByItemOwnerOrderByStartDesc(ownerId);
                 break;
         }
-
         return bookings.stream()
                 .map(BookingMapper::toBookingDto)
                 .collect(Collectors.toList());

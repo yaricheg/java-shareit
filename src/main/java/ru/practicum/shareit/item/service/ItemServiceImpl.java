@@ -1,6 +1,8 @@
 package ru.practicum.shareit.item.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
@@ -27,11 +29,20 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
 
+    @Autowired
     private final ItemRepository itemRepository;
+
+    @Autowired
     private final UserRepository userRepository;
+
+    @Autowired
     private final BookingRepository bookingRepository;
+
+    @Autowired
     private final CommentRepository commentRepository;
 
+    @Override
+    @Transactional
     public ItemDto createItem(ItemDto itemDto, long userId) {
         validateUserExists(userId);
 
@@ -41,6 +52,8 @@ public class ItemServiceImpl implements ItemService {
         return ItemMapper.toItemDto(itemRepository.save(item));
     }
 
+    @Override
+    @Transactional
     public ItemDto updateItem(ItemDto itemDto, long itemId, long userId) {
         validateUserExists(userId);
 
@@ -55,6 +68,8 @@ public class ItemServiceImpl implements ItemService {
         return ItemMapper.toItemDto(itemRepository.save(existingItem));
     }
 
+    @Override
+    @Transactional
     public ItemDto getItemById(long itemId) {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Item не найден с ID: " + itemId));
@@ -70,10 +85,12 @@ public class ItemServiceImpl implements ItemService {
         return itemDto;
     }
 
+    @Override
+    @Transactional
     public List<ItemDto> getItems(long ownerId) {
         validateUserExists(ownerId);
 
-        List<Item> items = itemRepository.findByOwnerId(ownerId);
+        List<Item> items = itemRepository.findByOwner(ownerId);
 
         if (items.isEmpty()) {
             return Collections.emptyList();
@@ -115,6 +132,8 @@ public class ItemServiceImpl implements ItemService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    @Transactional
     public Collection<ItemDto> searchItems(String text) {
         if (text == null || text.isEmpty()) {
             return Collections.emptyList();
@@ -125,6 +144,8 @@ public class ItemServiceImpl implements ItemService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    @Transactional
     public CommentDto addComment(long userId, long itemId, CommentDto commentDto) {
         validateUserExists(userId);
 
