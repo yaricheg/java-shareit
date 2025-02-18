@@ -49,11 +49,11 @@ public class BookingServiceImpl implements BookingService {
         List<Booking> bookings = bookingRepository.findNextBookingsForItem(item);
         bookings.stream()
                 .forEach(b -> {
-                    if (bookingDto.getStart().isAfter(b.getStart()) &
+                    if (bookingDto.getStart().isAfter(b.getStart()) &&
                             bookingDto.getStart().isBefore(b.getEnd())) {
                         throw new BadRequestException("Введите другое время бронирования");
                     }
-                    if (bookingDto.getEnd().isAfter(b.getStart()) &
+                    if (bookingDto.getEnd().isAfter(b.getStart()) &&
                             bookingDto.getEnd().isBefore(b.getEnd())) {
                         throw new BadRequestException("Введите другое время бронирования");
                     }
