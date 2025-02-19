@@ -80,7 +80,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @Transactional(readOnly=true)
+    @Transactional(readOnly = true)
     public List<ItemDto> getItems(long ownerId) {
         validateUserExists(ownerId);
 
@@ -127,7 +127,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @Transactional(readOnly=true)
+    @Transactional(readOnly = true)
     public Collection<ItemDto> searchItems(String text) {
         if (text == null || text.isEmpty()) {
             return Collections.emptyList();
