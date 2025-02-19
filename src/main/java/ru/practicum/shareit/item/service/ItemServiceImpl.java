@@ -1,9 +1,9 @@
 package ru.practicum.shareit.item.service;
 
-import jakarta.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.repository.BookingRepository;
@@ -29,23 +29,18 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
 
-    @Autowired
     private final ItemRepository itemRepository;
 
-    @Autowired
     private final UserRepository userRepository;
 
-    @Autowired
     private final BookingRepository bookingRepository;
 
-    @Autowired
     private final CommentRepository commentRepository;
 
     @Override
     @Transactional
     public ItemDto createItem(ItemDto itemDto, long userId) {
         validateUserExists(userId);
-
         Item item = ItemMapper.toItem(itemDto, 0, userId);
         item.setOwner(userId);
 
@@ -56,7 +51,6 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     public ItemDto updateItem(ItemDto itemDto, long itemId, long userId) {
         validateUserExists(userId);
-
         Item existingItem = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Item не найден"));
 
@@ -69,7 +63,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public ItemDto getItemById(long itemId) {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Item не найден с ID: " + itemId));
@@ -86,7 +80,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly=true)
     public List<ItemDto> getItems(long ownerId) {
         validateUserExists(ownerId);
 
@@ -133,7 +127,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly=true)
     public Collection<ItemDto> searchItems(String text) {
         if (text == null || text.isEmpty()) {
             return Collections.emptyList();

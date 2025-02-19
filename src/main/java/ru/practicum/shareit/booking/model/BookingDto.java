@@ -1,8 +1,8 @@
 package ru.practicum.shareit.booking.model;
 
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import ru.practicum.shareit.booking.validate.FutureDateTime;
 import ru.practicum.shareit.item.model.ItemDto;
 import ru.practicum.shareit.user.model.UserDto;
 
@@ -12,11 +12,11 @@ import java.time.LocalDateTime;
 public class BookingDto {
     private Long id;
 
-    @FutureDateTime("Указанная дата и время start должны быть в будущем.")
+    @Future(message = "Указанная дата и время start должны быть в будущем.")
     @NotNull(message = "Поле 'start' обязательно для заполнения")
     private LocalDateTime start;
 
-    @FutureDateTime("Указанная дата и время end должны быть в будущем.")
+    @Future(message = "Указанная дата и время end должны быть в будущем.")
     @NotNull(message = "Поле 'end' обязательно для заполнения")
     private LocalDateTime end;
 

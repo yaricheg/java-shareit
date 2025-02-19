@@ -10,6 +10,8 @@ import ru.practicum.shareit.item.model.Item;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.TreeSet;
+
 
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Long> {
@@ -55,8 +57,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query("SELECT b FROM Booking b " +
             "WHERE b.item IN :item " +
-            "AND b.start > CURRENT_TIMESTAMP " +
             "AND b.status = APPROVED " +
             "ORDER BY b.start ASC")
-    List<Booking> findNextBookingsForItem(@Param("item") Item item);
+    TreeSet<Booking> findBookingsForItem(@Param("item") Item item);
 }

@@ -1,12 +1,10 @@
 package ru.practicum.shareit.booking.service;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.model.*;
 import ru.practicum.shareit.booking.repository.BookingRepository;
-import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.model.Item;
@@ -16,6 +14,8 @@ import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 
@@ -23,15 +23,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
 
-    @Autowired
     private final BookingRepository bookingRepository;
 
-    @Autowired
     private final UserRepository userRepository;
 
-    @Autowired
     private final ItemRepository itemRepository;
 
+    private final BookingComparator bookingComparator;
 
 
     @Override
@@ -46,18 +44,16 @@ public class BookingServiceImpl implements BookingService {
         if (!item.isAvailable()) {
             throw new ValidationException("Предмет недоступен для бронирования");
         }
-        List<Booking> bookings = bookingRepository.findNextBookingsForItem(item);
-        bookings.stream()
+        Set<Booking> bookings = bookingRepository.findBookingsForItem(item);
+        List<Booking> sortedBookings = bookings.stream().sorted(bookingComparator).collect(Collectors.toList());
+        sortedBookings.stream()
                 .forEach(b -> {
-                    if (bookingDto.getStart().isAfter(b.getStart()) &&
-                            bookingDto.getStart().isBefore(b.getEnd())) {
-                        throw new BadRequestException("Введите другое время бронирования");
-                    }
-                    if (bookingDto.getEnd().isAfter(b.getStart()) &&
-                            bookingDto.getEnd().isBefore(b.getEnd())) {
-                        throw new BadRequestException("Введите другое время бронирования");
+                    if (!(bookingDto.getEnd().isBefore(b.getStart()) ||
+                            bookingDto.getStart().isAfter(b.getEnd()))) {
+                        throw new ValidationException("Пересечение с задачей " + b.getId());
                     }
                 });
+
         Booking booking = BookingMapper.toBooking(bookingDto, booker, item, BookingStatus.WAITING);
         Booking savedBooking = bookingRepository.save(booking);
         return BookingMapper.toBookingDto(savedBooking);
@@ -87,7 +83,7 @@ public class BookingServiceImpl implements BookingService {
 
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public BookingDto getBookingById(Long userId, Long bookingId) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new NotFoundException("Бронирование не найдено"));
@@ -102,7 +98,7 @@ public class BookingServiceImpl implements BookingService {
 
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<BookingDto> getUserBookings(Long userId, String state) {
         if (!userRepository.existsById(userId)) {
             throw new NotFoundException("Пользователь с ID " + userId + " не найден");
@@ -143,14 +139,12 @@ public class BookingServiceImpl implements BookingService {
 
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<BookingDto> getOwnerBookings(Long ownerId, String state) {
         if (!userRepository.existsById(ownerId)) {
             throw new NotFoundException("Пользователь с ID " + ownerId + " не найден");
         }
-
         List<Booking> bookings;
-
         switch (State.fromString(state)) {
             case CURRENT:
                 bookings = bookingRepository.findByItemOwnerAndStartBeforeAndEndAfterOrderByStartDesc(
