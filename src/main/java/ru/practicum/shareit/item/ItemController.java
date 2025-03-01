@@ -1,54 +1,65 @@
 package ru.practicum.shareit.item;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.comment.model.CommentDto;
 import ru.practicum.shareit.item.model.ItemDto;
-import ru.practicum.shareit.item.model.ItemUpdateRequestDto;
 import ru.practicum.shareit.item.service.ItemService;
 
 import java.util.Collection;
-
+import java.util.List;
 
 @RestController
-@RequestMapping("/items")
-@Slf4j
 @RequiredArgsConstructor
+@RequestMapping("/items")
 public class ItemController {
 
+    @Autowired
     private final ItemService itemService;
 
     @PostMapping
-    public ItemDto createItem(@Valid @RequestBody ItemDto item, @RequestHeader("X-Sharer-User-Id") Integer user) {
-        ItemDto newItem = itemService.createItem(item, user);
-        log.info("Вещь добавлена {}", newItem);
-        return newItem;
+    @ResponseStatus(HttpStatus.CREATED)
+    public ItemDto createItem(@Valid @RequestBody ItemDto itemDto, @NotNull @RequestHeader("X-Sharer-User-Id") long userId) {
+        return itemService.createItem(itemDto, userId);
     }
 
-    @PatchMapping("/{itemId}") // изменить можно название, описание, статус
-    public ItemDto updateItem(@PathVariable("itemId") Integer itemId,
-                              @RequestBody ItemUpdateRequestDto item,
-                              @RequestHeader("X-Sharer-User-Id") Integer userId) {
-        return itemService.updateItem(itemId, item, userId);
+    @PatchMapping("/{itemId}")
+    @ResponseStatus(HttpStatus.OK)
+    public ItemDto updateItem(
+            @RequestBody ItemDto itemDto,
+            @PathVariable("itemId") long itemId,
+            @NotNull @RequestHeader("X-Sharer-User-Id") long userId) {
+        return itemService.updateItem(itemDto, itemId, userId);
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto getItemById(@PathVariable("itemId") Integer itemId) {
-        log.info("Просмотр информации по конкретной вещи");
+    @ResponseStatus(HttpStatus.OK)
+    public ItemDto getItemById(@PathVariable("itemId") long itemId) {
         return itemService.getItemById(itemId);
     }
 
     @GetMapping
-    public Collection<ItemDto> getItemsOfUser(@RequestHeader("X-Sharer-User-Id") Integer userId) {
-        log.info("Просмотр вещей пользователя ");
-        return itemService.getItemsOfUser(userId);
+    @ResponseStatus(HttpStatus.OK)
+    public List<ItemDto> getItems(@NotNull @RequestHeader("X-Sharer-User-Id") long userId) {
+        return itemService.getItems(userId);
     }
 
-    @GetMapping("/search") // только доступные для аренды вещи
-    public Collection<ItemDto> getItemsSearch(@RequestParam("text") String text) {
-        log.info("Поиск вещей по тексту в названии ");
-        return itemService.getItemsSearch(text);
+    @GetMapping("/search")
+    @ResponseStatus(HttpStatus.OK)
+    public Collection<ItemDto> searchItems(@RequestParam("text") String text) {
+        return itemService.searchItems(text);
     }
 
+    @PostMapping("/{itemId}/comment")
+    @ResponseStatus(HttpStatus.CREATED)
+    public CommentDto addComment(
+            @NotNull @RequestHeader("X-Sharer-User-Id") long userId,
+            @PathVariable long itemId,
+            @Valid @RequestBody CommentDto commentDto) {
+        return itemService.addComment(userId, itemId, commentDto);
+    }
 }

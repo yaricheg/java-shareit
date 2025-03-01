@@ -1,62 +1,75 @@
 package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.exception.ConflictException;
+import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.model.UserDto;
 import ru.practicum.shareit.user.model.UserMapper;
-import ru.practicum.shareit.user.repository.UserStorage;
-import ru.practicum.shareit.exception.ConflictException;
+import ru.practicum.shareit.user.repository.UserRepository;
 
-import java.util.Collection;
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class UserServiceImpl implements UserService {
 
-    private final UserStorage userStorage;
-    private final UserMapper userMapper;
+    private final UserRepository userRepository;
 
     @Override
-    public Collection<UserDto> getAllUser() {
-        Collection<UserDto> allUsers = userStorage.getAllUser()
-                .stream()
-                .map(user -> userMapper.toUserDto(user))
-                .collect(Collectors.toList());
-        return allUsers;
-    }
-
-    @Override
-    public UserDto getUserById(Integer userId) {
-        return userMapper.toUserDto(userStorage.getUserById(userId));
-    }
-
-    @Override
-    public UserDto createUser(UserDto user) {
-        usersEmailCheck(user);
-        return userMapper.toUserDto(userStorage.createUser(user));
-    }
-
-    @Override
-    public UserDto updateUser(Integer userId, UserDto user) {
-        usersEmailCheck(user);
-        return userMapper.toUserDto(userStorage.updateUser(userId, user));
-    }
-
-    @Override
-    public void deleteUserById(Integer userId) {
-        userStorage.deleteUserById(userId);
-    }
-
-    private void usersEmailCheck(UserDto user) {
-        Set<String> emailUsers = getAllUser()
-                .stream().map(userObject -> userObject.getEmail())
-                .collect(Collectors.toSet());
-        if (emailUsers.contains(user.getEmail())) {
-            throw new ConflictException("Пользователь с данным email уже существует");
+    @Transactional
+    public UserDto createUser(UserDto userDto) {
+        boolean emailExists = userRepository.existsByEmail(userDto.getEmail());
+        if (emailExists) {
+            throw new ConflictException("Данный имейл уже используется");
         }
+
+        User user = UserMapper.toUser(userDto, 0);
+        return UserMapper.toUserDto(userRepository.save(user));
+    }
+
+    @Override
+    @Transactional
+    public UserDto updateUser(long userId, UserDto userDto) {
+        User existingUser = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+
+        boolean emailExists = userRepository.existsByEmail(userDto.getEmail()) &&
+                !existingUser.getEmail().equals(userDto.getEmail());
+        if (emailExists) {
+            throw new ConflictException("Данный имейл уже используется");
+        }
+
+        UserMapper.updateUserFields(existingUser, userDto);
+        return UserMapper.toUserDto(userRepository.save(existingUser));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public UserDto getUserById(long userId) {
+        return userRepository.findById(userId)
+                .map(UserMapper::toUserDto)
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден с ID: " + userId));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<UserDto> getUsers() {
+        return userRepository.findAll()
+                .stream()
+                .map(UserMapper::toUserDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public void deleteUser(long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new NotFoundException("Пользователь не найден с ID: " + userId);
+        }
+        userRepository.deleteById(userId);
     }
 }

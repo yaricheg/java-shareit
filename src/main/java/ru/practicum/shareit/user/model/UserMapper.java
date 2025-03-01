@@ -1,7 +1,32 @@
 package ru.practicum.shareit.user.model;
 
-public interface UserMapper {
-    UserDto toUserDto(User user);
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
-    User toUser(UserDto userDto);
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class UserMapper {
+    public static User toUser(UserDto userDto, long id) {
+        return new User(
+                id,
+                userDto.getName(),
+                userDto.getEmail()
+        );
+    }
+
+    public static UserDto toUserDto(User user) {
+        return new UserDto(
+                user.getId(),
+                user.getName(),
+                user.getEmail()
+        );
+    }
+
+    public static void updateUserFields(User user, UserDto request) {
+        if (request.getName() != null && !request.getName().isBlank()) {
+            user.setName(request.getName());
+        }
+        if (request.getEmail() != null && !request.getEmail().isBlank()) {
+            user.setEmail(request.getEmail());
+        }
+    }
 }
