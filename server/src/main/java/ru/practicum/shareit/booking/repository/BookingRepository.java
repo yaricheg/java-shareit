@@ -59,5 +59,5 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "WHERE b.item IN :item " +
             "AND b.status = APPROVED " +
             "ORDER BY b.start ASC")
-    TreeSet<Booking> findBookingsForItem(@Param("item") Item item);
+    List<Booking> findBookingsForItem(@Param("item") Item item);
 }

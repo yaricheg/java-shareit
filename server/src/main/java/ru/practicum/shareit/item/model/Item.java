@@ -5,6 +5,7 @@ import lombok.*;
 import ru.practicum.shareit.request.model.ItemRequest;
 
 @Entity
+@Builder
 @Table(name = "items")
 @Getter
 @Setter

@@ -12,12 +12,11 @@ import ru.practicum.shareit.user.service.UserService;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping(path = "/users")
 @RequiredArgsConstructor
 @Slf4j
 public class UserController {
-
 
     @Autowired
     private final UserService userService;

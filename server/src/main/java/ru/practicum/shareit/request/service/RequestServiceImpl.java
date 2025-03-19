@@ -35,6 +35,9 @@ public class RequestServiceImpl implements RequestService {
     @Transactional
     public ItemRequestDto createRequest(ItemRequestDto itemRequestDto, long userId) {
         User user = userRepository.getReferenceById(userId);
+        if (user == null) {
+            throw new NotFoundException("Пользователь не найден");
+        }
         ItemRequest itemRequest = RequestMapper.toItemRequest(itemRequestDto, 0, user);
         itemRequest.setCreated(LocalDateTime.now());
         return RequestMapper.toItemRequestDto(requestRepository.save(itemRequest));
@@ -89,5 +92,4 @@ public class RequestServiceImpl implements RequestService {
         }
         return itemRequestDto;
     }
-
 }

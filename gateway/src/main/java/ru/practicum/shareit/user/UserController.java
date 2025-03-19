@@ -26,19 +26,28 @@ public class UserController {
         return userClient.createUser(userDto);
     }
 
+    @PatchMapping("/{userId}")
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Object> updateUser(@PathVariable("userId") long userId,
                                              @RequestBody UserDto userDto) {
         return userClient.updateUser(userId, userDto);
     }
-
-    public ResponseEntity<Object> getUsers() {
-        return userClient.getUsers();
-    }
-
+    @GetMapping("/{userId}")
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Object> getUserById(@PathVariable("userId") long userId) {
         return userClient.getUserById(userId);
     }
 
+
+    @GetMapping
+    public ResponseEntity<Object> getUsers() {
+        return userClient.getUsers();
+    }
+
+
+
+    @DeleteMapping("/{userId}")
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Object> deleteUser(@PathVariable("userId") long userId) {
         return userClient.deleteUser(userId);
     }

@@ -43,7 +43,7 @@ public class BookingServiceImpl implements BookingService {
         if (!item.isAvailable()) {
             throw new ValidationException("Предмет недоступен для бронирования");
         }
-        Set<Booking> bookings = bookingRepository.findBookingsForItem(item);
+        List<Booking> bookings = bookingRepository.findBookingsForItem(item);
         List<Booking> sortedBookings = bookings.stream().sorted(bookingComparator).collect(Collectors.toList());
         sortedBookings.stream()
                 .forEach(b -> {
@@ -52,7 +52,6 @@ public class BookingServiceImpl implements BookingService {
                         throw new ValidationException("Пересечение с задачей " + b.getId());
                     }
                 });
-
         Booking booking = BookingMapper.toBooking(bookingDto, booker, item, BookingStatus.WAITING);
         Booking savedBooking = bookingRepository.save(booking);
         return BookingMapper.toBookingDto(savedBooking);
@@ -64,7 +63,6 @@ public class BookingServiceImpl implements BookingService {
     public BookingDto updateBookingStatus(Long userId, Long bookingId, Boolean approved) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new NotFoundException("Бронирование не найдено"));
-
         if (booking.getItem().getOwner() != userId) {
             throw new ValidationException("Только владелец вещи может подтверждать или отклонять бронирование");
         }
@@ -72,12 +70,31 @@ public class BookingServiceImpl implements BookingService {
         if (!booking.getStatus().equals(BookingStatus.WAITING)) {
             throw new ValidationException("Бронирование уже обработано");
         }
-
         booking.setStatus(approved ? BookingStatus.APPROVED : BookingStatus.REJECTED);
-
         bookingRepository.save(booking);
-
         return BookingMapper.toBookingDto(booking);
+
+
+       /* Booking booking = bookingRepository.findById(bookingId).orElseThrow(
+                () -> new NotFoundException("Бронирование не найдено".formatted(bookingId))
+        );
+
+        if (booking.getItem().getOwner()!= userId) {
+            throw new ValidationException("Только владелец вещи может подтверждать или отклонять бронирование");
+        }
+
+        if (booking.getStatus().equals(BookingStatus.WAITING)) {
+            if (approved) {
+                booking.setStatus(BookingStatus.APPROVED);
+            } else {
+                booking.setStatus(BookingStatus.REJECTED);
+            }
+        } else {
+            throw new ValidationException("Бронирование уже обработано");
+        }
+
+        return BookingMapper.toBookingDto(bookingRepository.save(booking));
+*/
     }
 
 

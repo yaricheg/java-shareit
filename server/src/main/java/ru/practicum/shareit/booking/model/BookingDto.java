@@ -2,13 +2,19 @@ package ru.practicum.shareit.booking.model;
 
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.practicum.shareit.item.model.ItemDto;
 import ru.practicum.shareit.user.model.UserDto;
 
 import java.time.LocalDateTime;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class BookingDto {
     private Long id;
 
