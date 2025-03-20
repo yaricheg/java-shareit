@@ -11,7 +11,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.booking.model.BookingDto;
 import ru.practicum.shareit.booking.model.BookingStatus;
-import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.item.model.ItemDto;
 import ru.practicum.shareit.user.model.UserDto;
@@ -19,7 +18,6 @@ import ru.practicum.shareit.user.model.UserDto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -154,7 +152,7 @@ class BookingControllerTest {
     }
 
     @Test
-    void getOwnerBookings()throws Exception {
+    void getOwnerBookings() throws Exception {
         when(bookingService.getOwnerBookings(userId, "ALL"))
                 .thenReturn(List.of(bookingResponseDto));
         mockMvc.perform(get("/bookings/owner")

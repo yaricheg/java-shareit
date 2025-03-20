@@ -17,13 +17,13 @@ import java.util.Collection;
 @RequestMapping("/requests")
 public class RequestController {
 
-     @Autowired
-     private final RequestService requestService;
+    @Autowired
+    private final RequestService requestService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ItemRequestDto createRequest(@Valid @RequestBody ItemRequestDto itemRequestDto,
-                                     @NotNull @RequestHeader("X-Sharer-User-Id") long userId) {
+                                        @NotNull @RequestHeader("X-Sharer-User-Id") long userId) {
         return requestService.createRequest(itemRequestDto, userId);
     }
 

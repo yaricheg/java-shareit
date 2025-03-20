@@ -175,7 +175,7 @@ public class ItemServiceImpl implements ItemService {
         return CommentMapper.toCommentDto(savedComment);
     }
 
-   private void validateUserExists(long userId) {
+    private void validateUserExists(long userId) {
         if (userId == 0) {
             throw new ValidationException("userId не должно быть пустым");
         }
