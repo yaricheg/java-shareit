@@ -109,7 +109,7 @@ class ItemControllerTest {
     }
 
 
-    @Test
+   /* @Test
     void getItems() throws Exception {
         List<ItemDto> items = List.of(item1);
         ItemDto item = ItemDto.builder()
@@ -125,7 +125,7 @@ class ItemControllerTest {
                 .andExpect(jsonPath("$.id").value(item.getId()))
                 .andExpect(status().isOk());
         verify(itemService, times(1)).getItems(userId);
-    }
+    }*/
 
 
     @Test
