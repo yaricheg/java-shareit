@@ -59,7 +59,7 @@ class RequestServiceImplTest {
     }
 
     @Test
-    void CreateRequestThenReturnItemRequestDto() {
+    void createRequestThenReturnItemRequestDto() {
         ItemRequestDto inputDto = new ItemRequestDto(null, "Ищу стол", requester.getId(),
                 LocalDateTime.now(), null);
         ItemRequestDto outputDto = requestService.createRequest(inputDto, requester.getId());
@@ -71,14 +71,11 @@ class RequestServiceImplTest {
     }
 
     @Test
-    void CreateRequestFromNotExistUserThenThrowNotFoundException() {
+    void createRequestFromNotExistUserThenThrowNotFoundException() {
         ItemRequestDto inputDto = new ItemRequestDto(null, "Ищу стол", requester.getId(),
                 LocalDateTime.now(), null);
 
         long noExistUserId = 999L;
-       /* NotFoundException exception = assertThrows(NotFoundException.class,
-                () -> requestService.createRequest(inputDto, noExistUserId));
-        assertTrue(exception.getMessage().contains(String.valueOf(noExistUserId)));*/
         assertThrows(NotFoundException.class, () -> requestService.createRequest(inputDto, noExistUserId));
     }
 

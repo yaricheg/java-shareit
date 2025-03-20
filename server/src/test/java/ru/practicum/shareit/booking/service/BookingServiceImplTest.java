@@ -144,7 +144,7 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void CreateBookingWithNonExistingItemThenNotFoundException() {
+    void createBookingWithNonExistingItemThenNotFoundException() {
         BookingDto requestDto = BookingDto.builder()
                 .itemId(9999L)
                 .start(now.plusDays(1))
@@ -157,7 +157,7 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void CreateBookingNonExistingUserThenNotFoundException() {
+    void createBookingNonExistingUserThenNotFoundException() {
         BookingDto requestDto = BookingDto.builder()
                 .itemId(item1.getId())
                 .start(now.plusDays(1))
@@ -186,7 +186,7 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void OwnerRejectsBookingThenStatusRejected() {
+    void ownerRejectsBookingThenStatusRejected() {
         Booking booking = bookingRepository.save(Booking.builder()
                 .booker(booker)
                 .item(item1)
@@ -201,7 +201,7 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void UpdateNonExistingBookingThenNotFoundException() {
+    void updateNonExistingBookingThenNotFoundException() {
         assertThrows(NotFoundException.class, () ->
                 bookingService.updateBookingStatus(user.getId(),
                         999L, true) // 999L — ID несуществующего бронирования
