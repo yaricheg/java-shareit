@@ -12,6 +12,8 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.comment.model.CommentDto;
+import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.model.ItemDto;
 import ru.practicum.shareit.item.repository.ItemRepository;
@@ -109,7 +111,16 @@ class ItemServiceImplTest {
     }
 
     @Test
-    void updateItemthenReturnUpdatedItemDto() {
+    void createCommentWithoutBookingThenValidationException() {
+        CommentDto comment = CommentDto.builder()
+                .text("Should fail")
+                .build();
+        assertThrows(ValidationException.class,
+                () -> itemService.addComment(booker.getId(), item2.getId(), comment));
+    }
+
+    @Test
+    void updateItemThenReturnUpdatedItemDto() {
         ItemDto update = ItemDto.builder()
                 .name("Name")
                 .description("Description")
@@ -123,6 +134,33 @@ class ItemServiceImplTest {
         assertEquals("Name", updatedDto.getName());
         assertEquals("Description", updatedDto.getDescription());
         assertFalse(updatedDto.getAvailable());
+    }
+
+    @Test
+    void updateItemWithNonOwnerThenNotFoundException() {
+        ItemDto update = ItemDto.builder()
+                .name("NewName")
+                .build();
+        assertThrows(NotFoundException.class,
+                () -> itemService.updateItem(update, item1.getId(), booker.getId()));
+    }
+
+    @Test
+    void updateItemWithNonItemThenNotFoundException() {
+        ItemDto update = ItemDto.builder()
+                .name("NewName")
+                .build();
+        assertThrows(NotFoundException.class,
+                () -> itemService.updateItem(update, 999L, user.getId()));
+    }
+
+    @Test
+    void updateItemWithNonUserThenNotFoundException() {
+        ItemDto update = ItemDto.builder()
+                .name("NewName")
+                .build();
+        assertThrows(NotFoundException.class,
+                () -> itemService.updateItem(update, item1.getId(), 999L));
     }
 
     @Test
@@ -142,11 +180,47 @@ class ItemServiceImplTest {
     }
 
     @Test
+    void getItemByIdWithNonExistingItemThenNotFoundException() {
+        assertThrows(NotFoundException.class,
+                () -> itemService.getItemById(999));
+    }
+
+    @Test
+    void getByIdForNonOwnerThenReturnDtoWithoutBookingInfo() {
+        CommentDto commentRequest = CommentDto.builder()
+                .text("Отличный товар!")
+                .build();
+        try {
+            itemService.addComment(booker.getId(), item1.getId(), commentRequest);
+        } catch (Exception ignored) {
+        }
+        ItemDto dto = itemService.getItemById(item1.getId());
+        assertNotNull(dto);
+        assertNull(dto.getLastBooking(), "lastBooking должна быть null для не-владельца");
+        assertNull(dto.getNextBooking(), "nextBooking должна быть null для не-владельца");
+
+        if (dto.getComments() != null && !dto.getComments().isEmpty()) {
+            assertTrue(dto.getComments()
+                    .stream()
+                    .anyMatch(c -> c.getText().equals("Отличный товар!")));
+        }
+    }
+
+    @Test
     void searchItemsThenReturnSuitableItemsDto() {
         Collection<ItemDto> result = itemService.searchItems("item1");
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals(item1.getName(), result.stream().collect(Collectors.toList()).getFirst().getName());
+        assertEquals(item1.getName(), result.stream()
+                .collect(Collectors.toList()).getFirst().getName());
+    }
+
+    @Test
+    void searchByEmptyTextThenReturnEmptyList() {
+        Collection<ItemDto> result = itemService.searchItems("   ");
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+
     }
 
     @Test

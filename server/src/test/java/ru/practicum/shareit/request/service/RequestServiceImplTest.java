@@ -70,17 +70,16 @@ class RequestServiceImplTest {
 
     }
 
-   /* @Test
+    @Test
     void createRequestFromNotExistUserThenThrowNotFoundException() {
         ItemRequestDto inputDto = new ItemRequestDto(null, "Ищу стол", requester.getId(),
                 LocalDateTime.now(), null);
 
         long noExistUserId = 999L;
         assertThrows(NotFoundException.class, () -> requestService.createRequest(inputDto, noExistUserId));
-    }*/
+    }
 
-/*
-    @Test
+   /* @Test
     void getRequestsThenReturnListOfRequestsWithItems() {
         ItemRequestDto inputDto = new ItemRequestDto(null, "Ищу стол", requester.getId(),
                 LocalDateTime.now(), null);
@@ -98,15 +97,13 @@ class RequestServiceImplTest {
         Collection<ItemRequestDto> requests = requestService.getRequests(requester.getId());
         assertNotNull(requests);
         assertEquals(1, requests.size());
-        ItemRequestDto itemRequestDto = requests.stream().collect(Collectors.toList()).get(0);
+        ItemRequestDto itemRequestDto = requests.stream().collect(Collectors.toList()).getFirst();
         assertEquals("Ищу стол", itemRequestDto.getDescription());
         List<ItemDto> items = itemRequestDto.getItems();
         assertNotNull(items);
         assertFalse(items.isEmpty());
         assertTrue(items.stream().anyMatch(i -> i.getName().equals("Стол")));
-    }
-
-    */
+    }*/
 
     @Test
     void getRequestsThenReturnListOfRequests() {
@@ -125,6 +122,11 @@ class RequestServiceImplTest {
         assertTrue(requests.stream().anyMatch(r -> r.getDescription().equals("Запрос 2")));
     }
 
+    @Test
+    void whenGetRequestsForUserWithoutRequestsThenNotFoundException() {
+        assertThrows(NotFoundException.class,
+                () -> requestService.getRequests((anotherUser.getId())));
+    }
 
     @Test
     void getRequestByIdThenReturnItemRequestDto() {
@@ -157,5 +159,4 @@ class RequestServiceImplTest {
                 () -> requestService.getRequestById(nonExistingRequestId));
         assertTrue(exception.getMessage().contains(String.valueOf(nonExistingRequestId)));
     }
-
 }

@@ -34,10 +34,8 @@ public class RequestServiceImpl implements RequestService {
     @Override
     @Transactional
     public ItemRequestDto createRequest(ItemRequestDto itemRequestDto, long userId) {
-        User user = userRepository.getReferenceById(userId);
-        if (user == null) {
-            throw new NotFoundException("Пользователь не найден");
-        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден".formatted(userId)));
         ItemRequest itemRequest = RequestMapper.toItemRequest(itemRequestDto, 0, user);
         itemRequest.setCreated(LocalDateTime.now());
         return RequestMapper.toItemRequestDto(requestRepository.save(itemRequest));
