@@ -32,6 +32,7 @@ public class UserController {
                                              @RequestBody UserDto userDto) {
         return userClient.updateUser(userId, userDto);
     }
+    
     @GetMapping("/{userId}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Object> getUserById(@PathVariable("userId") long userId) {
@@ -43,7 +44,6 @@ public class UserController {
     public ResponseEntity<Object> getUsers() {
         return userClient.getUsers();
     }
-
 
 
     @DeleteMapping("/{userId}")
