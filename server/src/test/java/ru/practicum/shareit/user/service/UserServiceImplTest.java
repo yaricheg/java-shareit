@@ -52,7 +52,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void сreateUserWithDuplicateEmailThenConflictException() {
+    void createUserWithDuplicateEmailThenConflictException() {
         UserDto newUser = UserDto.builder()
                 .name("Another Pavel")
                 .email(user1.getEmail())
@@ -79,7 +79,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void UpdateByIdWithWrongUserThenNotFoundException() {
+    void updateByIdWithWrongUserThenNotFoundException() {
         UserDto update = UserDto.builder()
                 .email(user2.getEmail())
                 .build();
