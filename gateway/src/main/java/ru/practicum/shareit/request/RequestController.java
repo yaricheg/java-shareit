@@ -9,8 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.request.model.ItemRequestDto;
-
+import ru.practicum.shareit.request.dto.ItemRequestDto;
 
 
 @Controller
