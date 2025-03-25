@@ -68,7 +68,7 @@ class BookingControllerTest {
                 .build();
     }
 
-  /*  @Test
+   /* @Test
     void createBooking() throws Exception {
         when(bookingService.createBooking(any(BookingDto.class), eq(userId)))
                 .thenReturn(bookingResponseDto);
@@ -77,7 +77,7 @@ class BookingControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", userId)
                         .content(mapper.writeValueAsString(bookingRequestDto)))
-                //.andExpect(status().isOk())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(bookingId))
                 .andExpect(jsonPath("$.item.id").value(10L))
                 .andExpect(jsonPath("$.booker.id").value(userId))
