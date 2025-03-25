@@ -47,8 +47,8 @@ class UserServiceImplTest {
 
     @Test
     void createUserThenReturnUserDto() {
-        assertEquals("Pavel", userService.getUserById(1).getName());
-        assertEquals("pavel@mail.ru", userService.getUserById(1).getEmail());
+        assertEquals("Pavel", userService.getUserById(user1.getId()).getName());
+        assertEquals("pavel@mail.ru", userService.getUserById(user1.getId()).getEmail());
     }
 
     @Test
