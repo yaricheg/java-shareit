@@ -12,7 +12,9 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingDto;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.repository.BookingRepository;
+import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.request.model.ItemRequest;
@@ -171,6 +173,56 @@ class BookingServiceImplTest {
     }
 
     @Test
+    void createBookingForUnavailableItemThenValidationException() {
+        item1.setAvailable(false);
+        itemRepository.save(item1);
+
+        BookingDto requestDto = BookingDto.builder()
+                .itemId(item1.getId())
+                .start(now.plusDays(1))
+                .end(now.plusDays(2))
+                .build();
+
+        assertThrows(ValidationException.class, () ->
+                bookingService.createBooking(requestDto, booker.getId())
+        );
+    }
+
+    @Test
+    void createBookingWithStartAfterEndThenBadRequestException() {
+        BookingDto requestDto = BookingDto.builder()
+                .itemId(item1.getId())
+                .start(now.plusDays(2))
+                .end(now.plusDays(1))
+                .build();
+        assertThrows(BadRequestException.class, () ->
+                bookingService.createBooking(requestDto, booker.getId())
+        );
+    }
+
+    @Test
+    void createBookingOverlappingWithExistingBookingThenValidationException() {
+        var existingBooking = Booking.builder()
+                .item(item1)
+                .booker(booker)
+                .start(now.plusDays(3))
+                .end(now.plusDays(4))
+                .status(BookingStatus.APPROVED)
+                .build();
+        bookingRepository.save(existingBooking);
+
+        BookingDto requestDto = BookingDto.builder()
+                .itemId(item1.getId())
+                .start(now.plusDays(3).plusHours(1))
+                .end(now.plusDays(4).plusHours(1))
+                .build();
+
+        assertThrows(ValidationException.class, () ->
+                bookingService.createBooking(requestDto, booker.getId())
+        );
+    }
+
+    @Test
     void updateBookingStatusThenReturnUpdatedBookingDto() {
         Booking booking = bookingRepository.save(Booking.builder()
                 .booker(booker)
@@ -183,6 +235,59 @@ class BookingServiceImplTest {
                 booking.getId(), true);
         assertNotNull(response);
         assertEquals(BookingStatus.APPROVED, response.getStatus());
+    }
+
+    @Test
+    void ownerApprovesBookingThenStatusChangesToApproved() {
+        Booking booking = bookingRepository.save(Booking.builder()
+                .booker(booker)
+                .item(item1)
+                .status(BookingStatus.WAITING)
+                .start(now.plusDays(1))
+                .end(now.plusDays(2))
+                .build());
+
+        BookingDto response = bookingService.updateBookingStatus(
+                user.getId(), booking.getId(), true);
+        assertNotNull(response);
+        assertEquals(BookingStatus.APPROVED, response.getStatus());
+    }
+
+    @Test
+    void nonOwnerTriesToApproveBookingThenValidationException() {
+        Booking booking = bookingRepository.save(Booking.builder()
+                .booker(booker)
+                .item(item1)
+                .status(BookingStatus.WAITING)
+                .start(now.plusDays(1))
+                .end(now.plusDays(2))
+                .build());
+
+        assertThrows(ValidationException.class, () ->
+                bookingService.updateBookingStatus(booking.getId(), booker.getId(), true)
+        );
+    }
+
+    @Test
+    void tryingToApproveNonWaitingBookingThenValidationException() {
+        Booking booking = bookingRepository.save(Booking.builder()
+                .booker(booker)
+                .item(item1)
+                .status(BookingStatus.APPROVED)
+                .start(now.plusDays(1))
+                .end(now.plusDays(2))
+                .build());
+        assertThrows(ValidationException.class, () ->
+                bookingService.updateBookingStatus(user.getId(), booking.getId(), true)
+        );
+    }
+
+    @Test
+    void tryingToApproveNonExistingBookingThenNotFoundException() {
+        assertThrows(NotFoundException.class, () ->
+                bookingService.updateBookingStatus(
+                        user.getId(), 999L, true)
+        );
     }
 
     @Test

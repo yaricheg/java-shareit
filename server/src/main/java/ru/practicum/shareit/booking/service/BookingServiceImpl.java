@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.model.*;
 import ru.practicum.shareit.booking.repository.BookingRepository;
+import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.model.Item;
@@ -38,7 +39,9 @@ public class BookingServiceImpl implements BookingService {
 
         Item item = itemRepository.findById(bookingDto.getItemId())
                 .orElseThrow(() -> new NotFoundException("Предмет не найден"));
-
+        if (bookingDto.getStart().isAfter(bookingDto.getEnd())) {
+            throw new BadRequestException("Старт бронирования должен быть раньше конца");
+        }
         if (!item.isAvailable()) {
             throw new ValidationException("Предмет недоступен для бронирования");
         }
