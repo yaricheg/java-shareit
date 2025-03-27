@@ -29,20 +29,17 @@ public class RequestController {
     }
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK) // список своих запросов вместе с данными об ответах на них
     public ResponseEntity<Object> getRequests(@NotNull @RequestHeader("X-Sharer-User-Id") long userId) {
         return itemRequestClient.getRequests(userId);
     }
 
     @GetMapping("/all")
-    @ResponseStatus(HttpStatus.OK) // список своих запросов вместе с данными об ответах на них
     public ResponseEntity<Object> getRequestsUsers() {
         return itemRequestClient.getRequestsUsers();
     }
 
 
     @GetMapping("/{requestId}")
-    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Object> getRequestById(@PathVariable("requestId") long requestId) {
         return itemRequestClient.getRequestById(requestId);
     }

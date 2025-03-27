@@ -1,6 +1,5 @@
 package ru.practicum.shareit.request.model;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,7 +17,6 @@ public class ItemRequestDto {
 
     private Long id;
 
-    @NotBlank(message = "Поле 'description' обязательно для заполнения")
     private String description;
 
     private Long requestor;

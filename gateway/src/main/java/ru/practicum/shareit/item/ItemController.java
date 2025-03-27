@@ -30,7 +30,6 @@ public class ItemController {
     }
 
     @PatchMapping("/{itemId}")
-    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Object> updateItem(
             @RequestBody ItemDto itemDto,
             @PathVariable("itemId") long itemId,
@@ -39,19 +38,16 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Object> getItemById(@PathVariable("itemId") long itemId) {
         return itemClient.getItemById(itemId);
     }
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Object> getItems(@NotNull @RequestHeader("X-Sharer-User-Id") long userId) {
         return itemClient.getItems(userId);
     }
 
     @GetMapping("/search")
-    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Object> searchItems(@RequestParam("text") String text) {
         return itemClient.searchItems(text);
     }

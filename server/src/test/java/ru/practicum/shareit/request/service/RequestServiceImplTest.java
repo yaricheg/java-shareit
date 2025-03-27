@@ -79,32 +79,6 @@ class RequestServiceImplTest {
         assertThrows(NotFoundException.class, () -> requestService.createRequest(inputDto, noExistUserId));
     }
 
-   /* @Test
-    void getRequestsThenReturnListOfRequestsWithItems() {
-        ItemRequestDto inputDto = new ItemRequestDto(null, "Ищу стол", requester.getId(),
-                LocalDateTime.now(), null);
-        ItemRequestDto createdRequest = requestService.createRequest(inputDto, requester.getId());
-
-        Item item = Item.builder()
-                .name("Cтол")
-                .description("Деревянный, почти новый")
-                .available(true)
-                .request(createdRequest.getId() != null ? requestRepository.findById(createdRequest.getId())
-                        .orElse(null) : null)
-                .owner(anotherUser.getId())
-                .build();
-        itemRepository.save(item);
-        Collection<ItemRequestDto> requests = requestService.getRequests(requester.getId());
-        assertNotNull(requests);
-        assertEquals(1, requests.size());
-        ItemRequestDto itemRequestDto = requests.stream().collect(Collectors.toList()).getFirst();
-        assertEquals("Ищу стол", itemRequestDto.getDescription());
-        List<ItemDto> items = itemRequestDto.getItems();
-        assertNotNull(items);
-        assertFalse(items.isEmpty());
-        assertTrue(items.stream().anyMatch(i -> i.getName().equals("Стол")));
-    }*/
-
     @Test
     void getRequestsThenReturnListOfRequests() {
         ItemRequestDto itemRequestDto1 = ItemRequestDto.builder()

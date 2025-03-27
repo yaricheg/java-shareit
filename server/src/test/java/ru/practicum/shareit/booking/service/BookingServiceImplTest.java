@@ -253,7 +253,7 @@ class BookingServiceImplTest {
         assertEquals(BookingStatus.APPROVED, response.getStatus());
     }
 
-  /*  @Test
+    @Test
     void nonOwnerTriesToApproveBookingThenValidationException() {
         Booking booking = bookingRepository.save(Booking.builder()
                 .booker(booker)
@@ -267,7 +267,7 @@ class BookingServiceImplTest {
                 bookingService.updateBookingStatus(booker.getId(),
                         booking.getId(), true)
         );
-    }*/
+    }
 
     @Test
     void tryingToApproveNonWaitingBookingThenValidationException() {

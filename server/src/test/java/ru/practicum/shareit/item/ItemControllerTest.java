@@ -109,23 +109,17 @@ class ItemControllerTest {
     }
 
 
-   /* @Test
+    @Test
     void getItems() throws Exception {
         List<ItemDto> items = List.of(item1);
-        ItemDto item = ItemDto.builder()
-                .id(3L)
-                .name("item")
-                .description("Description")
-                .available(true)
-                .build();
-        itemService.createItem(item, userId);
+        itemService.createItem(item1, userId);
         when(itemService.getItems(userId)).thenReturn(items);
-        mockMvc.perform(get("/items/{id}", item.getId())
+        mockMvc.perform(get("/items")
                         .header("X-Sharer-User-Id", userId))
-                .andExpect(jsonPath("$.id").value(item.getId()))
+                .andExpect(jsonPath("$[0].id").value(item1.getId()))
                 .andExpect(status().isOk());
         verify(itemService, times(1)).getItems(userId);
-    }*/
+    }
 
 
     @Test

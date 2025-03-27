@@ -1,7 +1,5 @@
 package ru.practicum.shareit.request;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,25 +20,22 @@ public class RequestController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ItemRequestDto createRequest(@Valid @RequestBody ItemRequestDto itemRequestDto,
-                                        @NotNull @RequestHeader("X-Sharer-User-Id") long userId) {
+    public ItemRequestDto createRequest(@RequestBody ItemRequestDto itemRequestDto,
+                                        @RequestHeader("X-Sharer-User-Id") long userId) {
         return requestService.createRequest(itemRequestDto, userId);
     }
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK) // список своих запросов вместе с данными об ответах на них
-    public Collection<ItemRequestDto> getRequests(@NotNull @RequestHeader("X-Sharer-User-Id") long userId) {
+    public Collection<ItemRequestDto> getRequests(@RequestHeader("X-Sharer-User-Id") long userId) {
         return requestService.getRequests(userId);
     }
 
     @GetMapping("/all")
-    @ResponseStatus(HttpStatus.OK) // список своих запросов вместе с данными об ответах на них
     public Collection<ItemRequestDto> getRequestsUsers() {
         return requestService.getRequestsUsers();
     }
 
     @GetMapping("/{requestId}")
-    @ResponseStatus(HttpStatus.OK)
     public ItemRequestDto getRequestById(@PathVariable("requestId") long requestId) {
         return requestService.getRequestById(requestId);
     }

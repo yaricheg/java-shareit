@@ -15,15 +15,22 @@ import java.util.List;
 @NoArgsConstructor
 public class ItemDto {
     private long id;
+
     @NotBlank(message = "Поле 'name' обязательно для заполнения")
     private String name;
+
     @NotBlank(message = "Поле 'description' обязательно для заполнения")
     private String description;
+
     @NotNull(message = "Поле 'available' обязательно для заполнения")
     private Boolean available;
+
     private LocalDateTime lastBooking;
+
     private LocalDateTime nextBooking;
+
     private List<CommentDto> comments;
+
     private long requestId;
 
     public ItemDto(long id, String name, String description, Boolean available) {

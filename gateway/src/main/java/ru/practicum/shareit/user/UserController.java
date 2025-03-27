@@ -27,13 +27,11 @@ public class UserController {
     }
 
     @PatchMapping("/{userId}")
-    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Object> updateUser(@PathVariable("userId") long userId, @RequestBody UserDto userDto) {
         return userClient.updateUser(userId, userDto);
     }
 
     @GetMapping("/{userId}")
-    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Object> getUserById(@PathVariable("userId") long userId) {
         return userClient.getUserById(userId);
     }
@@ -44,7 +42,6 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}")
-    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Object> deleteUser(@PathVariable("userId") long userId) {
         return userClient.deleteUser(userId);
     }
