@@ -73,7 +73,7 @@ class ItemControllerTest {
     @Test
     void updateItemThenReturnItemDto() throws Exception {
         ItemDto updatedItem = ItemDto.builder()
-                .id(1L)
+                .id(item1.getId())
                 .name("updateItem1")
                 .description("updateItemDescription1")
                 .available(true)
@@ -84,7 +84,7 @@ class ItemControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(updatedItem)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.id").value(item1.getId()))
                 .andExpect(jsonPath("$.name").value(updatedItem.getName()));
         verify(itemService, times(1)).updateItem(updatedItem, item1.getId(), userId);
     }

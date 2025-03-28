@@ -101,7 +101,6 @@ class BookingControllerTest {
         Boolean approved = true;
         when(bookingService.updateBookingStatus(bookingId, userId, approved))
                 .thenReturn(approvedResponse);
-
         mockMvc.perform(patch("/bookings/{bookingId}", bookingId)
                         .param("approved", approved.toString())
                         .header("X-Sharer-User-Id", userId))
